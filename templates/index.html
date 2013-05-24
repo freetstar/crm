@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bootstrap 101 Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">
+    <style>
+            body{
+                padding-top:60px;
+            }
+    </style>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+          <div class="navbar-inner">
+            <div class="container">
+              <button data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar" type="button">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a href="#" class="brand">Project name</a>
+              <div class="nav-collapse collapse">
+                <ul class="nav">
+                  <li class="active"><a href="#">Home</a></li>
+                  <li><a href="#about">About</a></li>
+                  <li><a href="#contact">Contact</a></li>
+                </ul>
+              </div><!--/.nav-collapse -->
+            </div>
+          </div>
+    </div>
+
+     <div class="container">
+
+     <h1>CRM</h1>
+     <form action="query" method="post">
+         {% csrf_token %}
+         <pre>
+            输入查询:<input type="text" name="qt">
+            选项<select name="choice">
+                <option>姓名 
+                <option>组织名称
+                <option>电子邮件
+                <option>电话
+                <option>地址
+                <input type="submit" value="search">
+         </pre>
+     </form>
+
+     <p>
+    {% if contacts %}
+        <ul>
+        {% for contact in contacts %}
+            <li>{{ contact.name }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No polls are available.</p>
+    {% endif %}
+    </p>
+     </div>
+<script src="http://code.jquery.com/jquery.js"></script>
+<script src="/static/bootstrap/js/bootstrap.js"></script>
+</body>
+</html>
