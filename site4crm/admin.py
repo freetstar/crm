@@ -16,7 +16,10 @@ admin.site.register(Contact,ContactAdmin)
 
 
 admin.site.register(Organization)
-admin.site.register(ContactOrganization)
+admin.site.register(OrganizationType)
 admin.site.register(Domain)
 admin.site.register(Department)
 admin.site.register(AddressBook)
+admin.site.register(ContactRole)
+admin.site.register(ContactInteractionType)
+admin.site.register(Interaction)

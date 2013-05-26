@@ -3,7 +3,7 @@
 import os
 curdir    =  os.path.dirname(os.path.abspath(__file__))
 parentdir =  os.path.abspath(os.path.join(os.path.dirname(__file__),".."))  
-SqliteName = curdir+'crm'
+SqliteName = curdir+'.sql'
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -130,6 +130,7 @@ INSTALLED_APPS = (
      'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'south',
     'site4crm'
 )
 

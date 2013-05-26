@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bootstrap 101 Template</title>
+    <title>查询结果</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">
@@ -35,33 +35,19 @@
      <div class="container">
 
      <h1>CRM</h1>
-     <form action="query" method="post">
-         {% csrf_token %}
-         <pre>
-            内容:<input type="text" name="qt">
-            选项:<select name="choice">
-                <option value="email">电子邮件  </option>
-                <option value="phone1">电话 </option>
-                <option value="addressb">地址</option>
-                <option value="name">姓名 </option>
-                <option value="organization">组织名称 </option>
-                </select>
-                <input type="submit" value="search">
-         </pre>
-     </form>
-
-     <p>联系人列表</p>
-     <p>
+     <h2>查询结果</h2>
     {% if contacts %}
-        <ul>
-        {% for contact in contacts %}
-            <li>{{ contact.name }}</li>
-        {% endfor %}
-        </ul>
+            <ul>
+                <li>姓名     : {{ contacts.name }}</li>
+                <li>部门     : {{ contacts.department }}</li>
+                <li>组织     : {{ contacts.organization }}</li>
+                <li>职责     : {{ contacts.orgjob }}</li>
+                <li>电话     : {{ contacts.phone1 }}</li>
+                <li>电子邮件 : {{ contacts.email }}</li>
+            </ul>
     {% else %}
-        <p>No polls are available.</p>
+        <p>No contacts are available.</p>
     {% endif %}
-    </p>
      </div>
 <script src="http://code.jquery.com/jquery.js"></script>
 <script src="/static/bootstrap/js/bootstrap.js"></script>
