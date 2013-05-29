@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bootstrap 101 Template</title>
+    <title>AddressBookList</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
     <!-- Bootstrap -->
     <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">
@@ -35,7 +35,7 @@
      <div class="container">
 
      <h1>CRM</h1>
-     <form action="query" method="post">
+     <form action="saveaddress" method="post">
          {% csrf_token %}
          <pre>
             内容:<input type="text" name="qt">
@@ -50,33 +50,14 @@
          </pre>
      </form>
 
-     <h2>联系人列表</h2>
-     <p>
-    {% if contacts %}
-        <ul>
-        {% for contact in contacts %}
-            <li>{{ contact.name }}</li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No polls are available.</p>
-    {% endif %}
-    </p>
+     <p>地址列表</p>
+     <ul>
+     <li> {{ state }}</li>
+     <li> {{ city  }}</li>
+     <li> {{ area }}</li>
+     </ul>
 
-    <h2>三级地址联动</h2>
-    <script src="/static/pcasunzip.js"></script>  
-    <form method="post" action="saveaddress">  
-        {% csrf_token %}  
-            <div>  
-            <table>{{ form.as_table }}</table>  
-        </div>  
-        <input type="submit" value="确定">  
-    </form>  
-    <script >  
-            new PCAS("state", "city","area");  
-    </script>  
      </div>
-
 <script src="http://code.jquery.com/jquery.js"></script>
 <script src="/static/bootstrap/js/bootstrap.js"></script>
 </body>

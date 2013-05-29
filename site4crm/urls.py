@@ -6,4 +6,5 @@ from views import *
 urlpatterns = patterns('',
                       url(r'^$',index),
                       url(r'^query$',query),  
+                      url(r'^saveaddress$',sa),  
                       )

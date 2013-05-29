@@ -1,9 +1,8 @@
 #coding:utf-8
 from django.db import models
+from django.utils.translation import ugettext, ugettext_lazy as _
 
-# Create your models here.
-
-class OrganizationType(models.Model):
+class ContactOrganization(models.Model):
     key  = models.CharField('key',max_length = 30,unique = True)
     name = models.CharField(max_length       = 30)
 
@@ -14,15 +13,15 @@ class OrganizationType(models.Model):
         verbose_name = ('组织类型')
 
 class Organization(models.Model):
-    name         = models.CharField(max_length                = 15)
-    emaildomain  = models.CharField(max_length                = 20)
-    organization = models.ManyToManyField('self',blank        = True,null = True)
-    type         = models.ForeignKey(OrganizationType,null = True)
+    name         = models.CharField(max_length             = 15)
+    emaildomain  = models.CharField(max_length             = 20)
+    organization = models.ManyToManyField('self',blank     = True,null = True)
+    orgtype      = models.ForeignKey(ContactOrganization,null = True)
 
     def _address(self):
         """return the address or None"""
         try:
-            return self.adressbook_set.get()
+            return self.adressbook_set.get(organization=self)
         except AddressBook.DoesNotExist:
             return None
     address = property(_address)    
@@ -45,7 +44,7 @@ class Domain(models.Model):
         verbose_name ="客户领域"
 
 class Department(models.Model):
-    """部门"""
+    """标准部门"""
     key     = models.CharField(max_length=5)
     name    = models.CharField(max_length=15)
 
@@ -53,7 +52,7 @@ class Department(models.Model):
         return self.name
 
     class Meta:
-        verbose_name ="部门"
+        verbose_name ="标准部门"
 
 class ContactRole(models.Model):
     key  = models.CharField(max_length = 20,unique = True,primary_key = True)
@@ -66,33 +65,48 @@ class ContactRole(models.Model):
         verbose_name  = "联系人角色"
 
 class Contact(models.Model):
-    ORGANIZATION_RULE = (
-        ('1','Role1'),
-        ('2','Role2'),
-    )
-    name         = models.CharField(max_length         = 30)
-    phone1       = models.CharField(max_length         = 20)
-    phone2       = models.CharField(max_length         = 20)
-    email        = models.EmailField(blank             = True,max_length = 75)
-    organization = models.ForeignKey(Organization)
-    role         = models.ForeignKey(ContactRole)
-    department   = models.ForeignKey(Department)
-    orgjob       = models.CharField(max_length         = 20,blank        = True)
-    contact      = models.ManyToManyField('self',blank = True,null       = True)
+    """
+    A customer, supplier or any individual that a store owner might interact
+    with.
+    """
+    title  = models.CharField(_("Title"), max_length = 30, blank = True, null = True)
+    name   = models.CharField(_("Name"), max_length  = 30, )
+    #Todo add 名字缩写模型
+    phone1 = models.CharField(max_length             = 20)
+    phone2 = models.CharField(max_length             = 20)
+    email = models.EmailField(_("Email"), blank=True, max_length=75)
 
     def _address(self):
         """return the address or None"""
         try:
-            return self.adressbook_set.get()
+            return self.adressbook_set.get(contact=self)
         except AddressBook.DoesNotExist:
             return None
     address = property(_address)    
+    department   = models.ForeignKey(Department)
+    organization = models.ForeignKey(Organization, verbose_name = _("Organization"), blank = True)
+    role         = models.ForeignKey('ContactRole', verbose_name  = _("Role"), )
+    orgjob       = models.CharField(max_length                  = 20,blank                 = True)
+    domain       = models.ForeignKey(Domain,null=True) 
+    contact      = models.ManyToManyField('self',blank = True,null       = True)
+    #user = models.ForeignKey(User, blank=True, null=True, unique=True)
+
+    def _get_address_book_entries(self):
+        """ Return all non primary shipping and billing addresses
+        """
+        return AddressBook.objects.filter(contact=self.pk).exclude(is_default_shipping=True).exclude(is_default_billing=True)
 
     def __unicode__(self):
         return self.name
 
     class Meta:
-        verbose_name   =  "联系人"
+        verbose_name = _("Contact")
+        verbose_name_plural = _("Contacts")
+
+class StateCityArea(models.Model):
+    state           = models.CharField( max_length    = 5)
+    city            = models.CharField( max_length    = 5)
+    area            = models.CharField( max_length    = 5)
 
 class AddressBook(models.Model):  
     """
@@ -101,9 +115,7 @@ class AddressBook(models.Model):
     contact         = models.ForeignKey(Contact,blank=True,null=True)
     organization    = models.ForeignKey(Organization,blank=True,null=True)
     description     = models.CharField( max_length    = 20, blank = True)
-    province        = models.CharField( max_length    = 5)
-    city            = models.CharField( max_length    = 5)
-    country         = models.CharField( max_length    = 5, blank  = True)
+    statecityarea   = models.ForeignKey(StateCityArea,blank=True )
     street          = models.CharField( max_length    = 80)
     buildingaddress = models.CharField( max_length    = 10)
     postal_code     = models.CharField( max_length    = 6)
@@ -111,9 +123,8 @@ class AddressBook(models.Model):
     def __unicode__(self):
        return u'%s - %s' % (self.contact.name, self.description)
 
-
     class Meta:
-        verbose_name   =   "地址簿"
+        verbose_name  =  "地址簿"
 
 class ContactInteractionType(models.Model):
     key = models.CharField(max_length=30, unique=True, primary_key=True)
